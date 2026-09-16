@@ -133,10 +133,23 @@ if (form) {
     successMsg.style.display = 'none';
 
     try {
-      const formData = new FormData(form);
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const subjectInput = document.getElementById('contact-subject');
+      const botcheckInput = document.getElementById('botcheck');
+      const payload = {
+        name,
+        email,
+        subject: subjectInput ? subjectInput.value.trim() : 'Portfolio Inquiry',
+        message,
+        botcheck: botcheckInput ? botcheckInput.checked : false
+      };
+
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
       });
       const data = await response.json();
 
@@ -144,7 +157,7 @@ if (form) {
         // ✅ Real success — email delivered to sri.himanshi16@gmail.com
         successMsg.style.display = 'block';
         successMsg.style.color = 'var(--success, #1a7344)';
-        successMsg.textContent = '✓ Message sent! I\'ll get back to you shortly.';
+        successMsg.textContent = "✓ Message sent! I'll get back to you shortly.";
         btnLabel.textContent = 'Sent ✓';
         form.reset();
         setTimeout(() => {
@@ -162,7 +175,7 @@ if (form) {
       successMsg.textContent = '✗ Something went wrong. Please email me directly at sri.himanshi16@gmail.com';
       btnLabel.textContent = 'Try Again';
       submitBtn.disabled = false;
-      console.error('Web3Forms error:', err);
+      console.error('Contact error:', err);
     }
   });
 }
